@@ -1,0 +1,6 @@
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"to\": \"adenleabbey@hotmail.com\", \"from\": \"tech@senergyeglobal.com\" ,\"html\":\"This is a test email\"}"
+}

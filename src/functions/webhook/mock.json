@@ -1,0 +1,59 @@
+{
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "signature": {
+      "token": "fc415882f111abcd4ea99b3020509a9c4b6b57d6181df6aaac",
+      "timestamp": "1619112178",
+      "signature": "06ed89dcc7dabaae9d8a8a9489f70493e43dd440a478038a76d2881adb218322"
+    },
+    "event-data": {
+      "tags": [],
+      "timestamp": 1619112178.483825,
+      "storage": {
+        "url": "https://sw.api.mailgun.net/v3/domains/mailgun.senergyeglobal.com/messages/AgEFltXk14m8Gtbctj5GRIp5ACCE3DswZA==",
+        "key": "AgEFltXk14m8Gtbctj5GRIp5ACCE3DswZA=="
+      },
+      "recipient-domain": "hotmail.com",
+      "event": "delivered",
+      "campaigns": [],
+      "user-variables": {},
+      "flags": {
+        "is-routed": false,
+        "is-authenticated": true,
+        "is-system-test": false,
+        "is-test-mode": false
+      },
+      "log-level": "info",
+      "envelope": {
+        "transport": "smtp",
+        "sender": "postmaster@mailgun.senergyeglobal.com",
+        "sending-ip": "104.130.96.4",
+        "targets": "adenleabbey@hotmail.com"
+      },
+      "message": {
+        "headers": {
+          "to": "adenleabbey@hotmail.com",
+          "message-id": "20210422171241.1.C58FB8576168A9DE@mailgun.senergyeglobal.com",
+          "from": "tech@senergyeglobal.com"
+        },
+        "attachments": [],
+        "size": 425
+      },
+      "recipient": "adenleabbey@hotmail.com",
+      "id": "Y1_9e_hISiSFmgO9DZ0fZA",
+      "delivery-status": {
+        "tls": true,
+        "mx-host": "hotmail-com.olc.protection.outlook.com",
+        "attempt-no": 2,
+        "description": "",
+        "session-seconds": 3.9449899196624756,
+        "utf8": true,
+        "code": 250,
+        "message": "OK",
+        "certificate-verified": true
+      }
+    }
+  }
+}
