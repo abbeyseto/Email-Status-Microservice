@@ -1,10 +1,9 @@
 export default {
   type: "object",
   properties: {
-    from: { type: "string" },
-    to: { type: "array" },
-    subject: { type: "string" },
-    html: { type: "string" },
+    "event-data": { type: "object" },
+    recipient: { type: "string" },
+    id: { type: "string" },
   },
-  required: ["from", "to", "html"],
+  required: ["event-data"],
 } as const;

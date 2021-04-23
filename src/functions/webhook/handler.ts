@@ -3,21 +3,55 @@ import "source-map-support/register";
 import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/apiGateway";
 import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
-
 import schema from "./schema";
+
+const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
+const config = require("../config");
+
+// const sns = new AWS.SNS();
 
 const webhook: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   event
 ) => {
-  console.log("====================================");
-  console.log(event);
-  console.log("====================================");
-  return formatJSONResponse._400({ message: "hi" });
+  let request = event.body["event-data"].event;
+  console.log(request);
+
+  const payload = {
+    Provider: "Mailgun",
+    timestamp: new Date(),
+    type: request,
+  };
+
+  const params: SnsParameter = {
+    Message: JSON.stringify(payload),
+    TopicArn: `arn:aws:sns:us-east-1:${config.awsAccountId}:emailStatuses`,
+  };
+
+  // Create promise and SNS service object
+  let publishTextPromise = new AWS.SNS({ apiVersion: "2010-03-31" })
+    .publish(params)
+    .promise();
+
+  // Handle promise's fulfilled/rejected states
+  return publishTextPromise
+    .then(function (data) {
+      console.log("MessageID is " + data.MessageId);
+      return formatJSONResponse._200({
+        id: data.MessageId,
+        data: payload,
+      });
+    })
+    .catch(function (err) {
+      return formatJSONResponse._400({ message: err.message });
+    });
 };
 
-export const main = middyfy(webhook);
+// create a resonse
 
-// interface ApiResponses {
-//   data?: object;
-//   error?: object;
-// }
+// return formatJSONResponse._400({ message: "hi" });
+interface SnsParameter {
+  Message: string;
+  Subject?: string;
+  TopicArn: string;
+}
+export const main = middyfy(webhook);

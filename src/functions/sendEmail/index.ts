@@ -10,7 +10,7 @@ export default {
         path: "sendEmail",
         cors: true,
         request: {
-          schema: {
+          schemas: {
             "application/json": schema,
           },
         },

@@ -20,6 +20,17 @@ const serverlessConfiguration: AWS = {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
     },
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: "Allow",
+            Resource: "*",
+            Action: "sns:*",
+          },
+        ],
+      },
+    },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
     },
