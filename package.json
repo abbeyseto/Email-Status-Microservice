@@ -13,6 +13,7 @@
     "@middy/core": "^1.5.2",
     "@middy/http-json-body-parser": "^1.5.2",
     "mailgun.js": "^3.3.0",
+    "mongodb": "^3.6.6",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {

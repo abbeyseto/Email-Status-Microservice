@@ -4,9 +4,22 @@ import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/apiGateway";
 import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 import schema from "./schema";
+const MongoClient = require("mongodb").MongoClient;
 
 const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
 const config = require("../config");
+
+const client = new MongoClient(config.MONGO_DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+let db;
+
+const createConn = async () => {
+  await client.connect();
+  db = client.db("");
+};
 
 /**
  * Validate event body with @schema when calling @webhook controller
@@ -34,6 +47,17 @@ const webhook: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
     TopicArn: `arn:aws:sns:us-east-1:${config.awsAccountId}:emailStatuses`,
   };
 
+  if (!client.isConnected()) {
+    // Cold start or connection timed out. Create new connection.
+    try {
+      await createConn();
+      console.log("DB connected");
+    } catch (e) {
+      return formatJSONResponse._400({
+        message: e.message,
+      });
+    }
+  }
   /**
    * Create promise and SNS service object
    * Handle promise's fulfilled/rejected states and return appopriate response
@@ -44,11 +68,9 @@ const webhook: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
 
   try {
     publishTextPromise.then(function (data) {
-      console.log(`SUCCESS! 
-      ${JSON.stringify(payload)} 
-      was sent and 
-      ${JSON.stringify(data)} 
-      is returned`);
+      const mailgunEvents = db.collection("mailgun-events");
+      mailgunEvents.insertOne(body);
+      console.log(JSON.stringify(payload), JSON.stringify(data));
       return formatJSONResponse._200({ message: "SNS published" });
     });
   } catch (err) {
