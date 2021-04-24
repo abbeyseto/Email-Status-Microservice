@@ -10,11 +10,13 @@ export default {
         path: "web-hook",
         cors: true,
         request: {
-          schema: {
+          schemas: {
             "application/json": schema,
           },
         },
       },
+    },
+    {
       sns: "emailStatuses",
     },
   ],

@@ -2,8 +2,8 @@ export default {
   type: "object",
   properties: {
     "event-data": { type: "object" },
-    recipient: { type: "string" },
-    id: { type: "string" },
+    signature: { type: "object" },
   },
-  required: ["event-data"],
+  required: ["event-data", "signature"],
+  additionalProperties: false,
 } as const;

@@ -6,6 +6,7 @@ import webhook from "@functions/webhook";
 const serverlessConfiguration: AWS = {
   service: "email-service",
   frameworkVersion: "2",
+  useDotenv: true,
   custom: {
     webpack: {
       webpackConfig: "./webpack.config.js",
@@ -13,6 +14,9 @@ const serverlessConfiguration: AWS = {
     },
   },
   plugins: ["serverless-webpack"],
+  package: {
+    individually: true,
+  },
   provider: {
     name: "aws",
     runtime: "nodejs14.x",
@@ -38,6 +42,7 @@ const serverlessConfiguration: AWS = {
   },
   // import the function via paths
   functions: { sendEmail, webhook },
+  configValidationMode: "error",
 };
 
 module.exports = serverlessConfiguration;
