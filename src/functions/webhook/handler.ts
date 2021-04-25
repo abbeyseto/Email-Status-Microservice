@@ -1,25 +1,14 @@
 import "source-map-support/register";
-
 import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/apiGateway";
-import { formatJSONResponse } from "@libs/apiGateway";
+// import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 import schema from "./schema";
-const MongoClient = require("mongodb").MongoClient;
+
+//import db connection
+// const { connectToDatabase } = require("../db");
 
 const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
 const config = require("../config");
-
-const client = new MongoClient(config.MONGO_DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-let db;
-
-const createConn = async () => {
-  await client.connect();
-  db = client.db("");
-};
 
 /**
  * Validate event body with @schema when calling @webhook controller
@@ -28,59 +17,50 @@ const createConn = async () => {
  */
 
 const webhook: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
-  event
+  event,
+  context
 ) => {
-  let { body } = event;
-  let type = body["event-data"]?.event || "";
-  let timestamp = body.signature.timestamp || "";
-
-  //Data check using interface Payload
+  var sns = new AWS.SNS();
+  const body = event.body;
+  //validate payload with interface typing
   const payload: Payload = {
     Provider: "Mailgun",
-    timestamp: timestamp || new Date(),
-    type: type || "",
+    timestamp: body.signature.timestamp,
+    type: "email delivered",
   };
 
-  //Data check using interface SnsParameter
+  // Validate SNS parameter to be sent using interface typing
   const params: SnsParameter = {
     Message: JSON.stringify(payload),
     TopicArn: `arn:aws:sns:us-east-1:${config.awsAccountId}:emailStatuses`,
   };
 
-  if (!client.isConnected()) {
-    // Cold start or connection timed out. Create new connection.
-    try {
-      await createConn();
-      console.log("DB connected");
-    } catch (e) {
-      return formatJSONResponse._400({
-        message: e.message,
-      });
-    }
-  }
+  // let response = {
+  //   statusCode: 200,
+  //   body: JSON.stringify("Hello from Lambda!"),
+  //   messageId: "",
+  //   result: "",
+  // };
+
   /**
-   * Create promise and SNS service object
-   * Handle promise's fulfilled/rejected states and return appopriate response
+   * Publish SNS message
    */
-  let publishTextPromise = new AWS.SNS({ apiVersion: "2010-03-31" })
-    .publish(params)
-    .promise();
-
-  try {
-    publishTextPromise.then(function (data) {
-      const mailgunEvents = db.collection("mailgun-events");
-      mailgunEvents.insertOne(body);
-      console.log(JSON.stringify(payload), JSON.stringify(data));
-      return formatJSONResponse._200({ message: "SNS published" });
-    });
-  } catch (err) {
-    console.log(err.message);
-    return formatJSONResponse._400({
-      message: "SNS not published, An error occured",
-    });
-  }
+  sns.publish(params, function (err, data) {
+    if (err) {
+      console.log(err.stack);
+      return;
+    }
+    console.log("push sent");
+    console.log(data);
+    context.done(null, "Function Finished!");
+  });
+  return null;
 };
-
+// Get a MongoClient.
+// const client = await connectToDatabase();
+// Inserts incoming webhook event to database
+// const mailgunEvents = client.db().collection("mailgun-events");
+// mailgunEvents.insertOne(body);
 interface SnsParameter {
   Message: string;
   Subject?: string;
