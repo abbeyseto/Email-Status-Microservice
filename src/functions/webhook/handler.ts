@@ -18,8 +18,8 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
   //validate payload with interface typing
   const payload: Payload = {
     Provider: "Mailgun",
-    timestamp: 7898789889,
-    type: "email delivered",
+    timestamp: body.signature.timestamp || "No time stamp",
+    type: `Email ${body["event-data"].event}` || "delivered status unknown",
   };
 
   // Validate SNS parameter to be sent using interface typing
