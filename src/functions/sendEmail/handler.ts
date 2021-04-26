@@ -15,7 +15,7 @@ const mailgun = new Mailgun(formData);
 const sendEmail: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   event
 ) => {
-  //Get API key and Domain for mailgun
+  //Get API key and Domain for mailgun stored using parameter store
   const apiKey = await getMailgunAPIKey();
   const apiDomain = await getMailgunDomain();
 

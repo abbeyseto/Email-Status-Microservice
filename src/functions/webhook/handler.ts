@@ -9,13 +9,16 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 const { connectToDatabase } = require("../db");
 
 const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
-const config = require("../config");
+const { getAWSAccountId } = require("../keyStoreModule");
+
 const sns = new AWS.SNS();
 
 const webhook: APIGatewayProxyHandler = async (event, _context) => {
   let body = JSON.parse(event.body);
   let message: string;
 
+  //Get AWS AccountID stored using parameter store
+  const accountId = await getAWSAccountId();
   //validate payload with interface typing
   const payload: Payload = {
     Provider: "Mailgun",
@@ -26,7 +29,7 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
   // Validate SNS parameter to be sent using interface typing
   const params: SnsParameter = {
     Message: JSON.stringify(payload),
-    TopicArn: `arn:aws:sns:us-east-1:${config.awsAccountId}:emailStatuses`,
+    TopicArn: `arn:aws:sns:us-east-1:${accountId}:emailStatuses`,
   };
 
   // Get a MongoDBClient.

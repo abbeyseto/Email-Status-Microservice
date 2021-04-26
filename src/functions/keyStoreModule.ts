@@ -3,7 +3,7 @@ const aws = require("aws-sdk");
 const ssm = new aws.SSM();
 /**
  * This module connects to stored secrets and keys using Parameter Store provided by Systems Manager in AWS.
- * The lambda decripts these encrypted keys for use in function calls
+ * The lambda decrypts these encrypted keys for use in function calls
  * @returns {string}
  */
 module.exports.getAWSAccountId = async function getAWSAccountId() {
