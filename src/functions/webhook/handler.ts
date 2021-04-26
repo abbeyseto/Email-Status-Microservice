@@ -19,6 +19,7 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
 
   //Get AWS AccountID stored using parameter store
   const accountId = await getAWSAccountId();
+
   //validate payload with interface typing
   const payload: Payload = {
     Provider: "Mailgun",

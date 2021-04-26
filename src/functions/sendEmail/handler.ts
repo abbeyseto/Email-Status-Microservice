@@ -19,6 +19,8 @@ const sendEmail: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
   const apiKey = await getMailgunAPIKey();
   const apiDomain = await getMailgunDomain();
 
+  console.log(apiKey, apiDomain);
+
   // Initialize mailgun Client
   const mg = mailgun.client({
     username: "api",

@@ -32,6 +32,11 @@ const serverlessConfiguration: AWS = {
             Resource: "*",
             Action: "sns:*",
           },
+          {
+            Effect: "Allow",
+            Resource: "*",
+            Action: "ssm:*",
+          },
         ],
       },
     },

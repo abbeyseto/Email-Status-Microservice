@@ -146,6 +146,13 @@
                   "Action": [
                     "sns:*"
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "ssm:*"
+                  ]
                 }
               ]
             }
@@ -174,7 +181,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/email-service/dev/1619379412023-2021-04-25T19:36:52.023Z/sendEmail.zip"
+          "S3Key": "serverless/email-service/dev/1619456040869-2021-04-26T16:54:00.869Z/sendEmail.zip"
         },
         "Handler": "src/functions/sendEmail/handler.main",
         "Runtime": "nodejs14.x",
@@ -204,7 +211,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/email-service/dev/1619379412023-2021-04-25T19:36:52.023Z/webhook.zip"
+          "S3Key": "serverless/email-service/dev/1619456040869-2021-04-26T16:54:00.869Z/webhook.zip"
         },
         "Handler": "src/functions/webhook/handler.main",
         "Runtime": "nodejs14.x",
@@ -227,24 +234,24 @@
         "WebhookLogGroup"
       ]
     },
-    "SendEmailLambdaVersionefd6Zm1upXk09SdVG4N30foW66babPTHplBLKr9wZg": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "FunctionName": {
-          "Ref": "SendEmailLambdaFunction"
-        },
-        "CodeSha256": "snHdS3mP7nYyoli+kGMTC0+1nSYSP4hog+AxldbyLes="
-      }
-    },
-    "WebhookLambdaVersionSfD5rKAiZaCcKLK0qBOinDrY8c6Jyy3SXooxnFCOOE": {
+    "WebhookLambdaVersionqY6VO6RQFlpVC2SistgXiuxEbJZI4KZ1wF0SRAt0EA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "WebhookLambdaFunction"
         },
-        "CodeSha256": "E9/1AMJ1vaQUNwkzHxyD5HMhlBuCWftd0aBTidE/148="
+        "CodeSha256": "gIuTV9gH7W/tNALe95TZP7KYNitksUiQxVgIar88kY0="
+      }
+    },
+    "SendEmailLambdaVersionO3ckpcdmEloEP2NpqVK102S8Xz2GqoEIEiP4xFU": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SendEmailLambdaFunction"
+        },
+        "CodeSha256": "+8mjlNAKjkWulDNImBKrg+I06LEEm5MChVOQceYDBgE="
       }
     },
     "ApiGatewayRestApi": {
@@ -509,7 +516,8 @@
             "from",
             "to",
             "html"
-          ]
+          ],
+          "additionalProperties": false
         }
       }
     },
@@ -558,7 +566,7 @@
         "ValidateRequestParameters": true
       }
     },
-    "ApiGatewayDeployment1619379392212": {
+    "ApiGatewayDeployment1619456020674": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -705,16 +713,16 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
-    "SendEmailLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "SendEmailLambdaVersionefd6Zm1upXk09SdVG4N30foW66babPTHplBLKr9wZg"
-      }
-    },
     "WebhookLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WebhookLambdaVersionSfD5rKAiZaCcKLK0qBOinDrY8c6Jyy3SXooxnFCOOE"
+        "Ref": "WebhookLambdaVersionqY6VO6RQFlpVC2SistgXiuxEbJZI4KZ1wF0SRAt0EA"
+      }
+    },
+    "SendEmailLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SendEmailLambdaVersionO3ckpcdmEloEP2NpqVK102S8Xz2GqoEIEiP4xFU"
       }
     },
     "ServiceEndpoint": {

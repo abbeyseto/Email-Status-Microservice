@@ -26,6 +26,12 @@ Depending on your preferred package manager, follow the instructions below to de
 | :------------------------------------------------------------------------------------------ |
 | It is important to change configuration settings before building, packaging and deployment. |
 
+**This project by default deploys to `us-east-1` to change it, add --region [REGION_NAME] when building and deploying**
+
+| :info: INFO                                                                              |
+| :--------------------------------------------------------------------------------------- |
+| The SNS service is deployed to `us-east-1`, change to this region to see cloudwatch logs |
+
 Go to the `src/functions/db.ts` file to change Mongodb database configuration parameters to deploy with your own database
 
 #### Storing Secrets and Keys
@@ -52,7 +58,7 @@ MAILGUN_DOMAIN="mailgun.XXXXXXXX.com"
 
 ## Deployment
 
-- Log in to AWS CLI from your teminal by
+- Connect to AWS from AWS CLI from your teminal by using the **aws configure** command.
 - Run `npx sls package --package dist ` to build from typescript to javascript files and package it in to the dist folder with cloudformation configuration files
 - Run `npx sls deploy --package dist` to deploy this stack to AWS
 
@@ -73,7 +79,7 @@ This accepts a POST request and a payload in the following format:
 ```bash
 {
     "to": ["abc@xyz.com"],
-    "from": "you@mailgun-email.com", # Sender's email from your mailgun account
+    "from": "you@your-domain.com", # Sender's email from your mailgun account
     "subject": "Email Service"
     "html":"This is a test email from email service" #Body of the email
 }
@@ -92,7 +98,7 @@ curl --location --request POST 'https://myApiEndpoint/dev/sendEmail' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "to": ["abc@xyz.com"],
-    "from": "you@mailgun-email.com",
+    "from": "you@your-domain.com",
     "subject": "Email Service"
     "html":"This is a test email from email service"
 }'
@@ -122,7 +128,7 @@ The project code base is mainly located within the `src` folder. This folder is 
 │   │   │   ├── mock.json       # `webhook` lambda input parameter, if any, for local invocation
 │   │   │   └── schema.ts       # `webhook` lambda input event JSON-Schema
 │   │   │
-│   │   ├── config.ts           # configurations abstactions. Change these parameters to your own
+│   │   ├── keyStoreModule.ts   # This module connects to stored secrets and keys using Parameter Store provided by Systems Manager in AWS.
 │   │   ├── db.ts               # mongodb database connection abstactions.
 │   │   └── index.ts            # Import/export of all lambda configurations
 │   │
@@ -137,10 +143,6 @@ The project code base is mainly located within the `src` folder. This folder is 
 ├── tsconfig.paths.json         # Typescript paths
 └── webpack.config.js           # Webpack configuration
 ```
-
-### Advanced usage
-
-Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
 
 ## Author
 
