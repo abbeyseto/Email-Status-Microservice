@@ -1,8 +1,8 @@
-# Email Status Service
+# Email Status Microservice
 
 This project implements a scenario where an email goes out via Mailgun (mailgun.com). Once it’s out, Mailgun sends various events back (open, clicked, etc).
 
-When the email is sent out via Mailgun, these events is sent via webhooks, hitting an API Gateway and then that information is proxied to a Lambda. The Lambda does two things: save a copy of the raw webhook a dabase and publish a transformed version into AWS SNS.
+When the email is sent out via Mailgun, these events is sent via webhooks, hitting an API Gateway and then that information is proxied to a Lambda. The Lambda does two things: save a copy of the raw webhook a database and publish a transformed version into AWS SNS.
 
 This service was implemented using the [Serverless framework](https://www.serverless.com/).
 
