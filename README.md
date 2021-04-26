@@ -44,7 +44,7 @@ aws ssm put-parameter --name NAME_OF_SECRET \
 
 Below are the keys needed for to run these lambda functions:
 
-awsAccountId="xxxxxxxxxxx"
+AccountId="xxxxxxxxxxx"
 
 MAILGUN_API_KEY="XXXXXXXXXXXXXXX"
 
