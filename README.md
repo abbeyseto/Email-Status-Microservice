@@ -26,7 +26,7 @@ Depending on your preferred package manager, follow the instructions below to de
 | :------------------------------------------------------------------------------------------ |
 | It is important to change configuration settings before building, packaging and deployment. |
 
-Go to the `src/functions/config.ts` file to change all configuration parameters to deploy to your own environment.
+Go to the `src/functions/db.ts` file to change Mongodb database configuration parameters to deploy with your own database
 
 #### Storing Secrets and Keys
 
