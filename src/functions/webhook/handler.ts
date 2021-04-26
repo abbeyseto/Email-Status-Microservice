@@ -15,6 +15,7 @@ const sns = new AWS.SNS();
 const webhook: APIGatewayProxyHandler = async (event, _context) => {
   let body = JSON.parse(event.body);
   let message: string;
+
   //validate payload with interface typing
   const payload: Payload = {
     Provider: "Mailgun",
@@ -28,7 +29,7 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
     TopicArn: `arn:aws:sns:us-east-1:${config.awsAccountId}:emailStatuses`,
   };
 
-  // Get a MongoClient.
+  // Get a MongoDBClient.
   const client = await connectToDatabase();
   /**
    * Publish SNS message
@@ -62,7 +63,7 @@ interface SnsParameter {
 
 interface Payload {
   Provider: string;
-  timestamp: string | number | any;
-  type: unknown | string;
+  timestamp: string | number;
+  type: string;
 }
 export const main = webhook;

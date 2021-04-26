@@ -1,70 +1,127 @@
-# Serverless - AWS Node.js Typescript
+# Email Status Service
 
-This project has been generated using the `aws-nodejs-typescript` template from the [Serverless framework](https://www.serverless.com/).
+This project implements a scenario where an email goes out via Mailgun (mailgun.com). Once it’s out, Mailgun sends various events back (open, clicked, etc).
 
-For detailed instructions, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
+When the email is sent out via Mailgun, these events is sent via webhooks, hitting an API Gateway and then that information is proxied to a Lambda. The Lambda does two things: save a copy of the raw webhook a dabase and publish a transformed version into AWS SNS.
 
-## Installation/deployment instructions
+This service was implemented using the [Serverless framework](https://www.serverless.com/).
+
+For additional knowledge using this framework with AWS, please refer to the [documentation](https://www.serverless.com/framework/docs/providers/aws/).
+
+## Installation
+
+Clone this repository on your local machine by usig the `git clone` command
 
 Depending on your preferred package manager, follow the instructions below to deploy your project.
 
 > **Requirements**: NodeJS `lts/fermium (v.14.15.0)`. If you're using [nvm](https://github.com/nvm-sh/nvm), run `nvm use` to ensure you're using the same Node version in local and in your lambda's runtime.
 
-### Using NPM
+### Dependencies
 
 - Run `npm i` to install the project dependencies
-- Run `npx sls deploy` to deploy this stack to AWS
 
-## Test your service
+### Configurations
 
-This template contains a single lambda function triggered by an HTTP request made on the provisioned API Gateway REST API `/hello` route with `POST` method. The request body must be provided as `application/json`. The body structure is tested by API Gateway against `src/functions/hello/schema.ts` JSON-Schema definition: it must contain the `name` property.
+| :warning: WARNING                                                                           |
+| :------------------------------------------------------------------------------------------ |
+| It is important to change configuration settings before building, packaging and deployment. |
 
-- requesting any other path than `/hello` with any other method than `POST` will result in API Gateway returning a `403` HTTP error code
-- sending a `POST` request to `/hello` with a payload **not** containing a string property named `name` will result in API Gateway returning a `400` HTTP error code
-- sending a `POST` request to `/hello` with a payload containing a string property named `name` will result in API Gateway returning a `200` HTTP status code with a message saluting the provided name and the detailed event processed by the lambda
+Go to the `src/functions/config.ts` file to change all configuration parameters to deploy to your own environment.
 
-> :warning: As is, this template, once deployed, opens a **public** endpoint within your AWS account resources. Anybody with the URL can actively execute the API Gateway endpoint and the corresponding lambda. You should protect this endpoint with the authentication method of your choice.
+#### Storing Secrets and Keys
 
-### Locally
+For security, this guide will help to store secrets using Parameter Store provided by Systems Manager in AWS.
 
-In order to test the hello function locally, run the following command:
+These keys need to be stored on AWS as the Lambda functions will need them to run.
 
-- `npx sls invoke local -f hello --path src/functions/hello/mock.json` if you're using NPM
-- `yarn sls invoke local -f hello --path src/functions/hello/mock.json` if you're using Yarn
+To store a key, make sure you are authenticated via the AWS CLI and run the following command:
 
-Check the [sls invoke local command documentation](https://www.serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/) for more information.
+```bash
+aws ssm put-parameter --name NAME_OF_SECRET \
+                      --value 'my super safe secret' \
+                      --type SecureString
+```
+
+Below are the keys needed for to run these lambda functions:
+
+awsAccountId="xxxxxxxxxxx",
+MAILGUN_API_KEY="XXXXXXXXXXXXXXX",
+MAILGUN_DOMAIN="mailgun.XXXXXXXX.com"
+
+## Deployment
+
+- Log in to AWS CLI from your teminal by
+- Run `npx sls package --package dist ` to build from typescript to javascript files and package it in to the dist folder with cloudformation configuration files
+- Run `npx sls deploy --package dist` to deploy this stack to AWS
+
+> **Alternatively**: You can also install the serverless package globally by runing `npm install -g serverless`
+
+> and then, run the `npm run build-deploy` command to both build and deploy to AWS
+
+## Testing the service
 
 ### Remotely
+
+Two API endpoint will be generated after deployment. they should be in the format
+
+- https://ApiEndpoint/dev/sendEmail - This is the endpoint for sending email.
+
+This accepts a POST request and a payload in the following format:
+
+```bash
+{
+    "to": ["abc@xyz.com"],
+    "from": "you@mailgun-email.com", # Sender's email from your mailgun account
+    "subject": "Email Service"
+    "html":"This is a test email from email service" #Body of the email
+}
+```
+
+> Content-Type: application/json
+
+This can be tested from postman
+
+- https://ApiEndpoint/dev/webhook - This webhook should be configured on your mailgun account to send events (e.g opened, delivered, click e.t.c)
 
 Copy and replace your `url` - found in Serverless `deploy` command output - and `name` parameter in the following `curl` command in your terminal or in Postman to test your newly deployed application.
 
 ```
-curl --location --request POST 'https://myApiEndpoint/dev/hello' \
+curl --location --request POST 'https://myApiEndpoint/dev/sendEmail' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "name": "Frederic"
+    "to": ["abc@xyz.com"],
+    "from": "you@mailgun-email.com",
+    "subject": "Email Service"
+    "html":"This is a test email from email service"
 }'
 ```
 
-## Template features
+> :warning: As is, this template, once deployed, opens a **public** endpoint within your AWS account resources. Anybody with the URL can actively execute the API Gateway endpoint and the corresponding lambda.
 
-### Project structure
+## Project structure
 
 The project code base is mainly located within the `src` folder. This folder is divided in:
 
-- `functions` - containing code base and configuration for your lambda functions
-- `libs` - containing shared code base between your lambdas
+- `functions` - containing code base and configuration for the lambda functions
+- `libs` - containing shared code base between lambdas
 
 ```
 .
 ├── src
 │   ├── functions               # Lambda configuration and source code folder
-│   │   ├── hello
-│   │   │   ├── handler.ts      # `Hello` lambda source code
-│   │   │   ├── index.ts        # `Hello` lambda Serverless configuration
-│   │   │   ├── mock.json       # `Hello` lambda input parameter, if any, for local invocation
-│   │   │   └── schema.ts       # `Hello` lambda input event JSON-Schema
+│   │   ├── sendEmail
+│   │   │   ├── handler.ts      # `sendEmail` lambda source code
+│   │   │   ├── index.ts        # `sendEmail` lambda Serverless configuration
+│   │   │   ├── mock.json       # `sendEmail` lambda input parameter, if any, for local invocation
+│   │   │   └── schema.ts       # `sendEmail` lambda input event JSON-Schema
+│   │   ├── webhook
+│   │   │   ├── handler.ts      # `webhook` lambda source code
+│   │   │   ├── index.ts        # `webhook` lambda Serverless configuration
+│   │   │   ├── mock.json       # `webhook` lambda input parameter, if any, for local invocation
+│   │   │   └── schema.ts       # `webhook` lambda input event JSON-Schema
 │   │   │
+│   │   ├── config.ts           # configurations abstactions. Change these parameters to your own
+│   │   ├── db.ts               # mongodb database connection abstactions.
 │   │   └── index.ts            # Import/export of all lambda configurations
 │   │
 │   └── libs                    # Lambda shared code
@@ -79,12 +136,10 @@ The project code base is mainly located within the `src` folder. This folder is 
 └── webpack.config.js           # Webpack configuration
 ```
 
-### 3rd party libraries
-
-- [json-schema-to-ts](https://github.com/ThomasAribart/json-schema-to-ts) - uses JSON-Schema definitions used by API Gateway for HTTP request validation to statically generate TypeScript types in your lambda's handler code base
-- [middy](https://github.com/middyjs/middy) - middleware engine for Node.Js lambda. This template uses [http-json-body-parser](https://github.com/middyjs/middy/tree/master/packages/http-json-body-parser) to convert API Gateway `event.body` property, originally passed as a stringified JSON, to its corresponding parsed object
-- [@serverless/typescript](https://github.com/serverless/typescript) - provides up-to-date TypeScript definitions for your `serverless.ts` service file
-
 ### Advanced usage
 
 Any tsconfig.json can be used, but if you do, set the environment variable `TS_NODE_CONFIG` for building the application, eg `TS_NODE_CONFIG=./tsconfig.app.json npx serverless webpack`
+
+## Author
+
+Adenle Abiodun

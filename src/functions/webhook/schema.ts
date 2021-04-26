@@ -1,3 +1,8 @@
+/**
+ * Schema for object passed into the webhook lambda as events
+ * @additionalProperties value ensures that no other field is allowed to pass
+ */
+
 export default {
   type: "object",
   properties: {
