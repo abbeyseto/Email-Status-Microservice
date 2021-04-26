@@ -50,11 +50,11 @@ aws ssm put-parameter --name NAME_OF_SECRET \
 
 Below are the keys needed for to run these lambda functions:
 
-AccountId="xxxxxxxxxxx"
+AccountId="xxxxxxxxxxx" (This is your AWS account ID)
 
-MAILGUN_API_KEY="XXXXXXXXXXXXXXX"
+MAILGUN_API_KEY="XXXXXXXXXXXXXXX" (API key from Mailgun)
 
-MAILGUN_DOMAIN="mailgun.XXXXXXXX.com"
+MAILGUN_DOMAIN="mailgun.XXXXXXXX.com" (Domain on mailgun)
 
 ## Deployment
 
@@ -70,7 +70,7 @@ MAILGUN_DOMAIN="mailgun.XXXXXXXX.com"
 
 ### Remotely
 
-Two API endpoint will be generated after deployment. they should be in the format
+Two API endpoint will be generated after deployment, found after running `npx sls deploy` command. Output should be in the format
 
 - https://ApiEndpoint/dev/sendEmail - This is the endpoint for sending email.
 
@@ -90,19 +90,6 @@ This accepts a POST request and a payload in the following format:
 This can be tested from postman
 
 - https://ApiEndpoint/dev/webhook - This webhook should be configured on your mailgun account to send events (e.g opened, delivered, click e.t.c)
-
-Copy and replace your `url` - found in Serverless `deploy` command output - and `name` parameter in the following `curl` command in your terminal or in Postman to test your newly deployed application.
-
-```
-curl --location --request POST 'https://myApiEndpoint/dev/sendEmail' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "to": ["abc@xyz.com"],
-    "from": "you@your-domain.com",
-    "subject": "Email Service"
-    "html":"This is a test email from email service"
-}'
-```
 
 > :warning: As is, this template, once deployed, opens a **public** endpoint within your AWS account resources. Anybody with the URL can actively execute the API Gateway endpoint and the corresponding lambda.
 
