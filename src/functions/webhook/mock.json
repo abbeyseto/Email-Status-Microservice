@@ -2,5 +2,5 @@
   "headers": {
     "Content-Type": "application/json"
   },
-  "body": "{\"event-data\":{\"event\": \"delivered\"},\"signature\": { \"timestamp\": \"23454353233\"}}"
+  "body": "{\"event-data\":{\"event\": \"delivered\"},\"signature\": {\"token\": \"fc415882f111abcd4ea99b3020509a9c4b6b57d6181df6aaac\",\"timestamp\": \"1619112178\",\"signature\":\"06ed89dcc7dabaae9d8a8a9489f70493e43dd440a478038a76d2881adb218322\"}}"
 }

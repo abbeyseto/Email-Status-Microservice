@@ -4,14 +4,15 @@
 const { MongoClient } = require("mongodb");
 
 /**
- * NOTE: This MongoDB cluster is for testing purposes.
+ * @NOTE : This MongoDB cluster is for testing purposes.
  * You can either change these values or use this instance for testing,
  * In production, these @credentials and @keys will be stored in a key management system
+ * @TODO : Fill in your mongoDB credentials
  */
-const mongoClusterName: string = "devcamper";
-const mongoUser: string = "abbeyseto";
-const mongoDbName: string = "email-tracker";
-const mongoPass: string = "ologinahtti1";
+const mongoClusterName: string = "";
+const mongoUser: string = "";
+const mongoDbName: string = "";
+const mongoPass: string = "";
 
 // Connection string to the database
 const uri: string = `mongodb+srv://${mongoUser}:${mongoPass}@${mongoClusterName}.xaaoc.mongodb.net/${mongoDbName}?retryWrites=true`;

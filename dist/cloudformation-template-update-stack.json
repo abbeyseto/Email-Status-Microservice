@@ -181,7 +181,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/email-service/dev/1619530828713-2021-04-27T13:40:28.713Z/sendEmail.zip"
+          "S3Key": "serverless/email-service/dev/1619537453534-2021-04-27T15:30:53.534Z/sendEmail.zip"
         },
         "Handler": "src/functions/sendEmail/handler.main",
         "Runtime": "nodejs14.x",
@@ -211,7 +211,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/email-service/dev/1619530828713-2021-04-27T13:40:28.713Z/webhook.zip"
+          "S3Key": "serverless/email-service/dev/1619537453534-2021-04-27T15:30:53.534Z/webhook.zip"
         },
         "Handler": "src/functions/webhook/handler.main",
         "Runtime": "nodejs14.x",
@@ -234,24 +234,24 @@
         "WebhookLogGroup"
       ]
     },
-    "WebhookLambdaVersionSBJDu3GdZkOvDQydrLQjP82HrrrDYObkDWDZW6sPQ": {
+    "WebhookLambdaVersionlh5d26h1ra7VGSOYCJUB6NQKd3CxFnbAshnlLzs4I": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "WebhookLambdaFunction"
         },
-        "CodeSha256": "xUYBw33RqMz2MfMqUecshVnranxO1dgDT2xm2ayYDIM="
+        "CodeSha256": "L0COxT2FKTFFvECWxD0G6FrrqCyo6wBVQPNVT6t6nH8="
       }
     },
-    "SendEmailLambdaVersionTTpy4IZmYJwmYag0f6TFUNnyKrbFEhkAZwbacE": {
+    "SendEmailLambdaVersioncHszz9KgvnmMQWTVBI360YbC5B47OptsnYhC17nus": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SendEmailLambdaFunction"
         },
-        "CodeSha256": "U9xTGfhWYHu1zyEI8Jrm/rqkrFh0tjBTGetvGD7KYJs="
+        "CodeSha256": "xsgY11cy5Q0CmhORUfM1QKwW2PXfuIUc7moaV6vZIKs="
       }
     },
     "ApiGatewayRestApi": {
@@ -566,7 +566,7 @@
         "ValidateRequestParameters": true
       }
     },
-    "ApiGatewayDeployment1619530806534": {
+    "ApiGatewayDeployment1619537430493": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -716,13 +716,13 @@
     "WebhookLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "WebhookLambdaVersionSBJDu3GdZkOvDQydrLQjP82HrrrDYObkDWDZW6sPQ"
+        "Ref": "WebhookLambdaVersionlh5d26h1ra7VGSOYCJUB6NQKd3CxFnbAshnlLzs4I"
       }
     },
     "SendEmailLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SendEmailLambdaVersionTTpy4IZmYJwmYag0f6TFUNnyKrbFEhkAZwbacE"
+        "Ref": "SendEmailLambdaVersioncHszz9KgvnmMQWTVBI360YbC5B47OptsnYhC17nus"
       }
     },
     "ServiceEndpoint": {

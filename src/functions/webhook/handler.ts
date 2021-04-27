@@ -7,8 +7,35 @@ const { connectToDatabase } = require("../db");
 
 const AWS = require("aws-sdk"); // eslint-disable-line import/no-extraneous-dependencies
 const { getAWSAccountId } = require("../keyStoreModule");
-
+const crypto = require("crypto");
 const sns = new AWS.SNS();
+
+const { getMailgunAPIKey } = require("../keyStoreModule");
+
+interface SnsParameter {
+  Message: string;
+  Subject?: string;
+  TopicArn: string;
+}
+
+interface Payload {
+  Provider: string;
+  timestamp: string | number;
+  type: string;
+}
+
+/**
+ *  The verify function Checks and validate that the webhook came from Mailgun
+ * @param param0
+ * @returns
+ */
+const verify = ({ signingKey, timestamp, token, signature }): Boolean => {
+  const encodedToken = crypto
+    .createHmac("sha256", signingKey)
+    .update(timestamp.concat(token))
+    .digest("hex");
+  return encodedToken === signature;
+};
 
 /**
  * Lambda that accepts Email status events from mailgun
@@ -21,6 +48,34 @@ const sns = new AWS.SNS();
 const webhook: APIGatewayProxyHandler = async (event, _context) => {
   let body = JSON.parse(event.body);
   let message: string;
+
+  const apiKey: string = await getMailgunAPIKey();
+  const signingKey = apiKey;
+
+  // Get a MongoDBClient.
+  const client = await connectToDatabase();
+
+  // Verify if event is from mailgun
+  try {
+    const { timestamp , token, signature }:{timestamp:string, token:string, signature:string} = body.signature;
+    const verifyEvent: Boolean = verify({ signingKey, timestamp, token, signature });
+
+    if (!verifyEvent) {
+      console.log("Could not verify this request is from mailgun");
+      return formatJSONResponse._400({
+        message: "Could not verify this request is from mailgun",
+      });
+    }
+  } catch (error) {
+    console.log(error.message, error.stack);
+    if (error instanceof TypeError) {
+      // This occurs if timestamp, token or signature is not present in body.signature
+      return formatJSONResponse._400({
+        message: "This is a fraudulent request",
+      });
+    }
+    return formatJSONResponse._400({ message: "Request not permitted" });
+  }
 
   //Get AWS AccountID stored using parameter store
   const accountId: string = await getAWSAccountId();
@@ -38,9 +93,6 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
     TopicArn: `arn:aws:sns:us-east-1:${accountId}:emailStatuses`,
   };
 
-  // Get a MongoDBClient.
-  const client = await connectToDatabase();
-
   //Publish SNS message
   try {
     sns.publish(params).promise();
@@ -52,7 +104,7 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
       .db("email-tracker")
       .collection("mailgun-events");
     let dbOperation = mailgunEvents.insertOne(body);
-    if (dbOperation && dbOperation.id) {
+    if (dbOperation) {
       console.log("event inseted in database");
     }
     return formatJSONResponse._200({ message: message });
@@ -62,16 +114,4 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
     return formatJSONResponse._400({ message: message });
   }
 };
-
-interface SnsParameter {
-  Message: string;
-  Subject?: string;
-  TopicArn: string;
-}
-
-interface Payload {
-  Provider: string;
-  timestamp: string | number;
-  type: string;
-}
 export const main = webhook;
