@@ -63,8 +63,8 @@ MAILGUN_DOMAIN="mailgun.XXXXXXXX.com" (Domain on mailgun)
 - Run `npx sls deploy --package dist` to deploy this stack to AWS
 
 > NOTE:: This project by default deploys to `us-east-1` to build and deploy to othe regions, add --region [REGION_NAME] flag when building and deploying
-> **Alternatively**: You can also install the serverless package globally by runing `npm install -g serverless`
 
+> **Alternatively**: You can also install the serverless package globally by runing `npm install -g serverless`
 > and then, run the `npm run build-deploy` command to both build and deploy to AWS
 
 ## Testing the service
