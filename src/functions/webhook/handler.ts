@@ -1,8 +1,5 @@
 import "source-map-support/register";
-// import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/apiGateway";
 import { formatJSONResponse } from "@libs/apiGateway";
-// import { middyfy } from "@libs/lambda";
-// import schema from "./schema";
 import { APIGatewayProxyHandler } from "aws-lambda";
 
 //import db connection
@@ -13,12 +10,20 @@ const { getAWSAccountId } = require("../keyStoreModule");
 
 const sns = new AWS.SNS();
 
+/**
+ * Lambda that accepts Email status events from mailgun
+ * It transforms and publish to SNS
+ * A copy of the event is saved in a database
+ * @param event
+ * @param _context
+ * @returns
+ */
 const webhook: APIGatewayProxyHandler = async (event, _context) => {
   let body = JSON.parse(event.body);
   let message: string;
 
   //Get AWS AccountID stored using parameter store
-  const accountId = await getAWSAccountId();
+  const accountId: string = await getAWSAccountId();
 
   //validate payload with interface typing
   const payload: Payload = {
@@ -35,9 +40,8 @@ const webhook: APIGatewayProxyHandler = async (event, _context) => {
 
   // Get a MongoDBClient.
   const client = await connectToDatabase();
-  /**
-   * Publish SNS message
-   */
+
+  //Publish SNS message
   try {
     sns.publish(params).promise();
     console.log("push sent");

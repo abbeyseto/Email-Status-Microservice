@@ -6,7 +6,7 @@ const ssm = new aws.SSM();
  * The lambda decrypts these encrypted keys for use in function calls
  * @returns {string}
  */
-module.exports.getAWSAccountId = async function getAWSAccountId() {
+module.exports.getAWSAccountId = async function getAWSAccountId(): Promise<string> {
   const params = {
     Name: "AccountId",
     WithDecryption: true,
@@ -16,7 +16,7 @@ module.exports.getAWSAccountId = async function getAWSAccountId() {
   return result.Parameter.Value;
 };
 
-module.exports.getMailgunAPIKey = async function getMailgunAPIKey() {
+module.exports.getMailgunAPIKey = async function getMailgunAPIKey(): Promise<string> {
   const params = {
     Name: "MAILGUN_API_KEY",
     WithDecryption: true,
@@ -26,7 +26,7 @@ module.exports.getMailgunAPIKey = async function getMailgunAPIKey() {
   return result.Parameter.Value;
 };
 
-module.exports.getMailgunDomain = async function getMailgunDomain() {
+module.exports.getMailgunDomain = async function getMailgunDomain(): Promise<string> {
   const params = {
     Name: "MAILGUN_DOMAIN",
     WithDecryption: true,
